@@ -3,6 +3,14 @@
 real TTF fonts + exported assets. Eyeball check per playbook 1.2 (visual verify).
 Run after: node script/capture-scene.js figma/v1/plugin.js > scene.json
 """
+
+# Console Windows mac dinh cp1252 nen khong in duoc tieng Viet -> UnicodeEncodeError,
+# va script chet GIUA CHUNG, de lai ket qua va do dang ma khong bao gi ro rang.
+# Khong bat nguoi chay phai nho dat PYTHONUTF8=1; tu lo lay cho chac.
+import sys as _sys
+for _s in (_sys.stdout, _sys.stderr):
+    if hasattr(_s, 'reconfigure'):
+        _s.reconfigure(encoding='utf-8', errors='replace')
 import os, json, glob, math
 from PIL import Image, ImageDraw, ImageFont
 

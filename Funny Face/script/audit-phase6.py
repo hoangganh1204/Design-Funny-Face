@@ -7,6 +7,14 @@
 Chạy: python3 "Funny Face/script/audit-phase6.py"
 (Audit 5 asset + 6 overlap do tools/verify.js lo, chạy qua build.sh)
 """
+
+# Console Windows mac dinh cp1252 nen khong in duoc tieng Viet -> UnicodeEncodeError,
+# va script chet GIUA CHUNG, de lai ket qua va do dang ma khong bao gi ro rang.
+# Khong bat nguoi chay phai nho dat PYTHONUTF8=1; tu lo lay cho chac.
+import sys as _sys
+for _s in (_sys.stdout, _sys.stderr):
+    if hasattr(_s, 'reconfigure'):
+        _s.reconfigure(encoding='utf-8', errors='replace')
 import os, re, sys, json, glob, io
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NAV  = os.path.join(ROOT, 'decompiled/resources/res/navigation/main_nav.xml')

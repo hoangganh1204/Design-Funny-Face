@@ -8,6 +8,14 @@ Auto-reads the keys from the decompiled strings.xml, or pass them explicitly:
     python3 fetch-remote-config.py --api-key AIza... --app-id 1:NNN:android:xxx
 Output: JSON of {param: value} to stdout (also saved to /tmp/rc.json). Keep tokens out of git.
 """
+
+# Console Windows mac dinh cp1252 nen khong in duoc tieng Viet -> UnicodeEncodeError,
+# va script chet GIUA CHUNG, de lai ket qua va do dang ma khong bao gi ro rang.
+# Khong bat nguoi chay phai nho dat PYTHONUTF8=1; tu lo lay cho chac.
+import sys as _sys
+for _s in (_sys.stdout, _sys.stderr):
+    if hasattr(_s, 'reconfigure'):
+        _s.reconfigure(encoding='utf-8', errors='replace')
 import json, re, sys, os, urllib.request
 
 def read_keys_from_res(res):

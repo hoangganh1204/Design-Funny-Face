@@ -4,6 +4,14 @@ Collect image_url/preview_url/... from the remote lists + bundled JSONs, then do
   TOKEN=<pat or from rc> RC=/tmp/rc.json python3 "<App>/script/download-remote.py"
 Set BASE to the CDN base the code uses (trace it in sources: ds.i.* / Glide URL builder).
 """
+
+# Console Windows mac dinh cp1252 nen khong in duoc tieng Viet -> UnicodeEncodeError,
+# va script chet GIUA CHUNG, de lai ket qua va do dang ma khong bao gi ro rang.
+# Khong bat nguoi chay phai nho dat PYTHONUTF8=1; tu lo lay cho chac.
+import sys as _sys
+for _s in (_sys.stdout, _sys.stderr):
+    if hasattr(_s, 'reconfigure'):
+        _s.reconfigure(encoding='utf-8', errors='replace')
 import os, io, json, urllib.request
 from PIL import Image
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

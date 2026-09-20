@@ -25,6 +25,15 @@ import sys
 import numpy as np
 from PIL import Image
 
+# Console Windows mac dinh cp1252, khong in duoc tieng Viet -> UnicodeEncodeError.
+# Truoc day phai nho dat PYTHONUTF8=1; quen mot lan la script chet GIUA CHUNG,
+# sau buoc chep asset nhung TRUOC do_manifest_and_main, de lai manifest mang ten v1
+# — Figma import vao se de len plugin v1 ma khong bao gi. Tu lo lay cho chac.
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V1 = os.path.join(ROOT, 'figma', 'v1')
 V3 = os.path.join(ROOT, 'figma', 'v3')

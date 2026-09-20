@@ -13,6 +13,14 @@ Việc nó làm:
 Quy ước: KHOÁ là tên file không đuôi. Thay ảnh thì giữ nguyên tên, đổi đuôi thoải
 mái (.png/.jpg/.webp đều được — Figma đọc PNG và JPEG; WEBP sẽ được cảnh báo).
 """
+
+# Console Windows mac dinh cp1252 nen khong in duoc tieng Viet -> UnicodeEncodeError,
+# va script chet GIUA CHUNG, de lai ket qua va do dang ma khong bao gi ro rang.
+# Khong bat nguoi chay phai nho dat PYTHONUTF8=1; tu lo lay cho chac.
+import sys as _sys
+for _s in (_sys.stdout, _sys.stderr):
+    if hasattr(_s, 'reconfigure'):
+        _s.reconfigure(encoding='utf-8', errors='replace')
 import argparse, base64, glob, io, os, re, sys
 
 try:

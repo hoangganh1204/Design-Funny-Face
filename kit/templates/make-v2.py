@@ -3,6 +3,14 @@
 Edit the R list with your sampled brand→new-hue swaps. Layout stays identical (only tokens change).
 Run: python3 "<App>/script/make-v2.py"   (then build --src assets/v2 --plugin figma/v2)
 """
+
+# Console Windows mac dinh cp1252 nen khong in duoc tieng Viet -> UnicodeEncodeError,
+# va script chet GIUA CHUNG, de lai ket qua va do dang ma khong bao gi ro rang.
+# Khong bat nguoi chay phai nho dat PYTHONUTF8=1; tu lo lay cho chac.
+import sys as _sys
+for _s in (_sys.stdout, _sys.stderr):
+    if hasattr(_s, 'reconfigure'):
+        _s.reconfigure(encoding='utf-8', errors='replace')
 import os
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 s=open(os.path.join(ROOT,'figma/v1/code.js')).read()
