@@ -1,0 +1,16 @@
+{
+  "name": "Funny Face — APK to Figma v2",
+  "id": "funny-face-apk-to-figma-v2",
+  "api": "1.0.0",
+  "main": "plugin.js",
+  "editorType": [
+    "figma"
+  ],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "none"
+    ],
+    "reasoning": "Chạy offline; mọi ảnh đã nhúng sẵn trong plugin.js."
+  }
+}

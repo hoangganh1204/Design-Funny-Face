@@ -1,0 +1,40 @@
+# ============================================================================
+#  Funny Face — Design
+#  Nguyên tắc: chỉ commit thứ KHÔNG sinh lại được. Mọi thứ khác bỏ qua.
+#  Không có file này thì repo là 1.44 GB / 119.550 file, và GitHub từ chối
+#  thẳng vì APK 115 MB vượt giới hạn 100 MB mỗi file.
+# ============================================================================
+
+# ── Mã nguồn dịch ngược — 901 MB, 118k file ─────────────────────────────────
+# Sinh lại bằng apktool 2.12.0 + jadx 1.5.1 từ APK trong sources/.
+Funny Face/decompiled/
+
+# ── APK — 115 MB, VƯỢT giới hạn 100 MB mỗi file của GitHub ──────────────────
+*.apk
+Funny Face/apk/
+
+# ── Ảnh preview tự sinh — 171 MB ───────────────────────────────────────────
+# Dựng lại: capture-scene.js + render-preview.py
+Funny Face/build/
+
+# ── Bundle plugin sinh ra từ assets + code ─────────────────────────────────
+# Dựng lại: python tools/build-plugin.py --src <assets> --plugin <figma/vN>
+Funny Face/figma/*/plugin.js
+Funny Face/figma/*/assets.js
+Funny Face/figma/*/icons.js
+*.bak
+
+# ── assets/v3 do make-v3.py chép ra từ assets/v1 rồi biến đổi ──────────────
+# Đừng sửa tay trong đó — sửa make-v3.py.
+Funny Face/assets/v3/
+
+# ── Python ─────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+
+# ── Rác hệ điều hành / trình soạn thảo ─────────────────────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/

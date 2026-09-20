@@ -1,0 +1,9 @@
+{
+  "name": "<App> — APK to Figma",
+  "id": "<app-slug>-apk-to-figma",
+  "api": "1.0.0",
+  "main": "plugin.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": { "allowedDomains": ["none"], "reasoning": "Runs offline; all images embedded." }
+}
