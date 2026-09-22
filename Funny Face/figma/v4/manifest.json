@@ -1,0 +1,16 @@
+{
+  "name": "Funny Face — Design v4 (play screens light)",
+  "id": "funny-face-design-v4",
+  "api": "1.0.0",
+  "main": "plugin.js",
+  "editorType": [
+    "figma"
+  ],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "none"
+    ],
+    "reasoning": "Chạy offline; mọi ảnh đã nhúng sẵn trong plugin.js."
+  }
+}
