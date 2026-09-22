@@ -175,6 +175,68 @@ def border_color(im):
     return max(cnt, key=cnt.get) if cnt else px[w // 2, 2]
 
 
+# To goc bo: hinh hoc la chinh, to loang chi la duong lui.
+CORNER_THRESH = 75          # nguong to loang cho duong lui
+CORNER_MAX_R = 0.25         # ban kinh bo toi da, theo canh ngan
+CORNER_SKEW = 1.35          # rx/ry lech qua muc nay = mot phia da chay vao nhan vat
+CORNER_BITE = 2             # an them vao trong cung mot chut de nuot dai chuyen tiep mem
+
+
+def _corner_radius(im, c, d):
+    """Do ban kinh bo tai mot goc: di doc HAI canh cho den khi het trang."""
+    w, h = im.size
+    px = im.load()
+    (cx, cy), (dx, dy) = c, d
+    lim = min(w, h) // 2
+    rx = ry = 0
+    while rx < lim and dist(px[cx + dx * rx, cy], (255, 255, 255)) < 70:
+        rx += 1
+    while ry < lim and dist(px[cx, cy + dy * ry], (255, 255, 255)) < 70:
+        ry += 1
+    return rx, ry
+
+
+def _fill_corner(im, c, d, bgc):
+    """To tam giac trang o mot goc bo, KHONG dung mau lam duong di.
+
+    Ban cu to loang tu goc voi nguong rong. Cach do coi mau la duong di, nen khi nhan
+    vat mac do CUNG MAU voi trang giay ma the dan len thi mach loang chui thang vao
+    quan ao: ao phong TRANG cua Leonardo chay xuong sat canh duoi, cham vao goc trang,
+    va ca ben vai bi to thanh mau the. Siet nguong chi thu hep thiet hai thanh mot net
+    vien manh chay doc mep sang nhat cua ao — van la loi.
+
+    Goc bo la chuyen HINH HOC, nen do bang hinh hoc: di doc hai canh tu goc cho den khi
+    het trang. Voi goc bo that, hai so do bang nhau (do duoc 100-147 px, lech duoi 10%
+    tren ca bo anh nguon). Khi mot phia chay vao nhan vat no dai vot len — Leonardo BR
+    do 387 ngang so voi 121 doc — nen lay so NHO khi hai so lech qua CORNER_SKEW.
+
+    Ca the trang co net vien ve san (anh Trump) thi ca hai canh deu trang het nua anh;
+    do khong phai goc bo, va van can to loang nhu cu.
+    """
+    w, h = im.size
+    rx, ry = _corner_radius(im, c, d)
+    lim = int(min(w, h) * CORNER_MAX_R)
+    # Ca hai canh deu trang het nua anh -> khong phai goc bo ma la the TRANG co net
+    # vien ve san (anh Trump). To loang van dung cho ca do.
+    both_wide = rx >= lim and ry >= lim
+    if both_wide or max(rx, ry) <= min(rx, ry) * CORNER_SKEW:
+        ImageDraw.floodfill(im, c, bgc, thresh=CORNER_THRESH)
+        return
+    # Hai so do lech nhau -> phia dai hon da chay ra khoi goc. Lay phia ngan.
+    r = min(rx, ry)
+    if r <= 0:
+        return
+    (cx, cy), (dx, dy) = c, d
+    x0, y0 = min(cx, cx + dx * (r - 1)), min(cy, cy + dy * (r - 1))
+    box = (x0, y0, x0 + r, y0 + r)
+    ox, oy = cx + dx * (r - 1) - x0, cy + dy * (r - 1) - y0      # tam cung, trong box
+    yy, xx = np.ogrid[:r, :r]
+    outside = ((xx - ox) ** 2 + (yy - oy) ** 2) > (r - CORNER_BITE) ** 2
+    tile = np.asarray(im.crop(box)).copy()
+    tile[outside] = bgc[:tile.shape[2]]
+    im.paste(Image.fromarray(tile, im.mode), box)
+
+
 def fill_round_corners(im):
     """Thẻ BO GÓC -> sau khi cắt, 4 góc còn tam giác trắng. Tô loang bằng màu nền của thẻ."""
     w, h = im.size
@@ -185,10 +247,12 @@ def fill_round_corners(im):
     # CHỈ xử lý khi góc thật sự TRẮNG (đặc trưng của thẻ bo góc trên nền trắng). Bản
     # trước chỉ kiểm tra "góc khác màu nền" -> với ảnh nền chuyển màu, góc tối cũng thoả,
     # rồi tô loang ngưỡng 75 chui thẳng vào vùng tối trên mặt (ảnh Haaland mất nửa mặt).
+    dirs = {(0, 0): (1, 1), (w - 1, 0): (-1, 1),
+            (0, h - 1): (1, -1), (w - 1, h - 1): (-1, -1)}
     for c in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):
         cc = im.load()[c]
         if dist(cc, (255, 255, 255)) < 70 and dist(cc, bgc) > 60:
-            ImageDraw.floodfill(im, c, bgc, thresh=75)
+            _fill_corner(im, c, dirs[c], bgc)
     return im
 
 
